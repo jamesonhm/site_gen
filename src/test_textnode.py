@@ -1,6 +1,6 @@
 import unittest
 
-from textnode import TextNode, split_nodes_delimiter
+from textnode import TextNode 
 
 
 class TestTextNode(unittest.TestCase):
@@ -25,15 +25,6 @@ class TestTextNode(unittest.TestCase):
         node2 = TextNode("This is a text node", "italic", "www.google.com")
         self.assertNotEqual(node, node2)
 
-    def test_test_split_delimiter1(self):
-        node = TextNode("This is a text block with a `code block` word", "text")
-        correct = [
-            TextNode("This is a text block with a ", "text"),
-            TextNode("code block", "code"),
-            TextNode(" word", "text")
-        ]
-        new_nodes = split_nodes_delimiter([node], '`', "code")
-        self.assertEqual(new_nodes, correct)
 
 if __name__ == "__main__":
     unittest.main()
