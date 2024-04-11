@@ -1,6 +1,7 @@
 
 from htmlnode import LeafNode, ParentNode
-
+from inline_markdown import text_to_textnodes
+from textnode import text_node_to_html_node
 
 block_type_paragraph = "paragraph"
 block_type_heading = "heading"
@@ -55,34 +56,54 @@ def block_to_block_type(markdown):
     else:
         return block_type_paragraph
 
+def text_to_children(text):
+    text_nodes = text_to_textnodes(text)
+    children = []
+    for node in text_nodes:
+        html_node = text_node_to_html_node(node)
+        children.append(html_node)
+    return children
+
 def paragraph_to_html(block):
-    return LeafNode("p", block)
+    lines = block.split('\n')
+    paragraph = ' '.join(lines)
+    children = text_to_children(paragraph)
+    return ParentNode("p", children)
 
 def heading_to_html(block):
     level = block.count('#')
     header = block[level+1:]
-    return LeafNode(f"h{level}", header)
+    children = text_to_children(header)
+    return ParentNode(f"h{level}", children)
 
 def code_to_html(block):
-    inner = '\n'.join('\n'.split(block)[1:-1])
-    return ParentNode("pre", [LeafNode("code", inner)])
+    inner = block[4:-4]
+    children = text_to_children(inner)
+    return ParentNode("pre", [ParentNode("code", children)])
 
 def quote_to_html(block):
-    lines = '\n'.split(block)
-    lines = '\n'.join([line[1:] for line in lines])
-    return LeafNode("blockquote", lines)
+    lines = block.split('\n')
+    lines = ' '.join([line.lstrip('>').strip() for line in lines])
+    children = text_to_children(lines)
+    return ParentNode("blockquote", children)
 
 def ulist_to_html(block):
-    lines = '\n'.split(block)
-    lines = [line[2:] for line in lines]
-    inner = [LeafNode('li', line) for line in lines]
-    return ParentNode('ul', inner)
+    lines = block.split('\n')
+    html_items = []
+    for line in lines:
+        text = line[2:]
+        children = text_to_children(text)
+        html_items.append(ParentNode("li", children))
+    return ParentNode('ul', html_items)
 
 def olist_to_html(block):
-    lines = '\n'.split(block)
-    lines = [line[3:] for line in lines]
-    inner = [LeafNode('li', line) for line in lines]
-    return ParentNode('ol', inner)
+    lines = block.split('\n')
+    html_items = []
+    for line in lines:
+        text = line[3:]
+        children = text_to_children(text)
+        html_items.append(ParentNode("li", children))
+    return ParentNode('ol', html_items)
 
 def markdown_to_html_nodes(markdown):
     blocks = markdown_to_blocks(markdown)
@@ -90,17 +111,17 @@ def markdown_to_html_nodes(markdown):
     nodes = []
     for block, block_type in list(zip(blocks, types)):
         match block_type:
-            case block_type_paragraph:
+            case "paragraph":
                 nodes.append(paragraph_to_html(block))
-            case block_type_heading:
+            case "heading":
                 nodes.append(heading_to_html(block))
-            case block_type_code:
+            case "code":
                 nodes.append(code_to_html(block))
-            case block_type_quote:
+            case "quote":
                 nodes.append(quote_to_html(block))
-            case block_type_ulist:
+            case "unordered_list":
                 nodes.append(ulist_to_html(block))
-            case block_type_olist:
+            case "ordered_list":
                 nodes.append(olist_to_html(block))
             case _:
                 raise Exception(f"Not a block type {block_type}")
