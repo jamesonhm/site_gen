@@ -2,7 +2,6 @@ import unittest
 from inline_markdown import (
     extract_markdown_images,
     extract_markdown_links,
-    markdown_to_blocks,
     split_nodes_delimiter,
     split_nodes_image,
     split_nodes_link,
@@ -109,18 +108,5 @@ class TestInlineMarkdown(unittest.TestCase):
             TextNode("link", text_type_link, "https://boot.dev"),
         ]
         self.assertEqual(text_to_textnodes(text), correct_nodes)
-
-    def test_markdown_to_blocks(self):
-        markdown = """
-            This is **bolded** paragraph
-
-            This is another paragraph with *italic* text and `code` here
-            This is the same paragraph on a new line
-
-            * This is a list
-            * with items
-        """
-        correct_blocks = ["This is **bolded** paragraph", "This is another paragraph with *italic* text and `code` here\nThis is the same paragraph on a new line", "* This is a list\n* with items"]
-        self.assertEqual(markdown_to_blocks(markdown), correct_blocks)
 
 

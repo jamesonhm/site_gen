@@ -9,14 +9,6 @@ from textnode import (
     text_type_link,
 )
 
-def markdown_to_blocks(markdown):
-    blocks = markdown.split("\n\n")
-    blocks = [block.strip() for block in blocks]
-    final = []
-    for block in blocks:
-        final.append('\n'.join([line.strip() for line in block.split('\n')]))
-    return final
-
 def text_to_textnodes(text):
     node = TextNode(text, text_type_text)
     delimiters = ['**', '*', '`']
