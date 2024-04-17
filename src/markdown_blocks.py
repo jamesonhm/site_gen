@@ -105,7 +105,7 @@ def olist_to_html(block):
         html_items.append(ParentNode("li", children))
     return ParentNode('ol', html_items)
 
-def markdown_to_html_nodes(markdown):
+def markdown_to_html_node(markdown):
     blocks = markdown_to_blocks(markdown)
     types = [block_to_block_type(block) for block in blocks]
     nodes = []

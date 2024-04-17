@@ -3,6 +3,7 @@ import pathlib
 import shutil
 
 from copystatic import copy_static, copy_static_recursive
+from md_to_html import generate_page
 from textnode import TextNode
 
 
@@ -21,6 +22,8 @@ def main():
 
     print("Copying static files to public dir...")
     copy_static_recursive(dir_path_static, dir_path_public)
+
+    generate_page('./content/index.md', 'template.html', './public/index.html')
 
 if __name__ == "__main__":
     main()
