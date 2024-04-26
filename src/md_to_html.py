@@ -29,3 +29,16 @@ def generate_page(from_path, template_path, dest_path):
     f.write(templ)
     f.close()
 
+def generate_pages_recursive(dir_path_content, template_path, dest_dir_path):
+    if not os.path.exists(dest_dir_path):
+        os.mkdir(dest_dir_path)
+
+    for file in os.listdir(dir_path_content):
+        from_path = os.path.join(dir_path_content, file)
+        if os.path.isfile(from_path):
+            dest_fname = file.split('.')[0] + '.html'
+            dest_path = os.path.join(dest_dir_path, dest_fname)
+            generate_page(from_path, template_path, dest_path)
+        else:
+            dest_path = os.path.join(dest_dir_path, file)
+            generate_pages_recursive(from_path, template_path, dest_path)
